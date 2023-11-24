@@ -42,16 +42,17 @@ m2 <- m1[c("Species", "a", "b")] %>%
 
 #read in BS length and abundance data and taxize species names
 bs_length <- read.csv("Data/2022_10_31/bs_data/bs_lengths.csv") %>%
-  rename("query" = "species") %>%
+ # rename("query" = "species") %>%
   mutate(query = tolower(query)) %>%
   mutate(site = tolower(site))
+
 bs_abund <- read.csv("Data/2022_10_31/bs_data/bs_abundance.csv") %>%
   rename(query = species) %>%
   group_by(site, year, month, day, query) %>%
   summarise(count = sum(abundance, na.rm = TRUE))%>%
   mutate(site = tolower(site))
-#bs_codes <- read_rds("Data/2021_09_20/derived_data/taxa_bs_resolved.rds")
-#write_csv(bs_codes, "Data/2021_09_20/derived_data/names_for_length.csv")
+#bs_codes <- read_rds("Data/2022_10_31/derived_data/taxa_bs_resolved.rds")
+#write_csv(bs_codes, "Data/2022_10_31/derived_data/names_for_length.csv")
     #replace query with closest relative (only for weight estimates)
 bs_codes <- read.csv("Data/2022_10_31/derived_data/names_for_length_1.csv") %>%
   dplyr::select(c("species", "query")) %>%
@@ -174,12 +175,12 @@ seine_area <- seine_area %>%
                 (3.1415 * (width2/2)^2) + (width2 * (extent2 - width2/2))) %>%  # set 2
    mutate(volume = (3.1415 * (width1/2)^2)*depth1 + (width1 * (extent1 - width1/2))*depth2/2 +   # set 1
                    (3.1415 * (width2/2)^2)*depth2 + (width2 * (extent2 - width2/2))*depth2/2)   # set 2
-write_rds(seine_area, "Data/2022_10_31/BS_effort.rds")
+write_rds(seine_area, "Data/2022_10_31/derived_data/BS_effort.rds")
 
 
 h3 <- filter(h2, year >= 2018)
 
-eDNA_long <- read_rds("Data/2022_10_31/eDNA_long.rds") #use to filter BS dataset
+eDNA_long <- read_rds("Data/2022_10_31/derived_data/eDNA_long.rds") #use to filter BS dataset
 
 #calculate density metrics, clean up, filter
 bs_long <- merge(h2[c("site", "year", "month", "day", "query", "abundance", "weight")], 
@@ -205,7 +206,7 @@ u1 <- bs_long %>%
 bs_long <- bs_long %>% 
   filter(!query %in% u1$query)
 
-write_rds(bs_long, "Data/2022_10_31/bs_long.rds")
+write_rds(bs_long, "Data/2022_10_31/derived_data/bs_long.rds")
 
 
 

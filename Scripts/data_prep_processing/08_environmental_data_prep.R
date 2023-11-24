@@ -1,29 +1,24 @@
 #Format environmental data, calculate temperature gradients and date difference, PCA of seawater mixing
 
 #packages
-library("vegan")
 library("tidyverse")
 library("dplyr")
-library("here")
-library("readxl")
-library("sf")
-library("rgdal")
 library("lubridate")
 
 #site survey dates
-survey_dates <- read_rds("Data/2022_10_31/eDNA_long.rds") %>%
+survey_dates <- read_rds("Data/2022_10_31/derived_data/eDNA_long.rds") %>%
   select(c("dat_site", "site", "date", "hakai_link_date")) %>%
   distinct() %>%
   mutate(dat_diff = abs(time_length(difftime(date, hakai_link_date), "days")))
 
+unique(survey_dates$site)
+
 #YSI data
-ysi <- read_excel("Data/2022_10_31/bs_data/FABSMasterData.xlsx", sheet = "ysi")
+ysi <- read_csv("Data/2022_10_31/bs_data/bs_YSI.csv")
 ysi_clean <- ysi %>%
   select(c("site", "year", "month", "day", "location", "temp")) %>%
   distinct() %>%                                                    #remove duplicate columns
-  mutate(temp = if_else(temp == "NA", "", temp)) %>%
   pivot_wider(., names_from = location, values_from = temp)  %>%     #make wide
-  select(!"NA") %>%
   mutate(a1 = as.numeric(a1)) %>%                                   #make numeric 
   mutate(b1 = as.numeric(b1)) %>%
   mutate(b2 = as.numeric(b2)) %>%
@@ -44,16 +39,8 @@ ysi_clean <- ysi %>%
 #write_rds(ysi_clean, "Data/2022_10_31/bs_data/ysi.rds")
 #ysi_clean <- readRDS("Data/2022_10_31/bs_data/ysi.rds")
 
-#habitat richness estimates (from rubidge) extracted in QGIS#
-hab_rich <- readOGR("Data/2022_10_31/bs_data/bs_2015_spatial_habrich.gpkg") #read geopackage
-#format hab_rich
-hab_rich <- as.data.frame(hab_rich)
-hab_rich <- rename(hab_rich, site = field_1)
-hab_rich <- hab_rich[c("site", "nFeat", "GiZScore", "GiPValue")]
-write_rds(hab_rich, "Data/2022_10_31/bs_data/hab_rich.rds")
-
 #read in habitat and habitat distances
-habitat <- read_csv("Data/2022_10_31/bs_data/hakaiBS_habitat_modified.csv")
+habitat <- read_csv("Data/2022_10_31/bs_data/bs_habitat.csv")
 habitat $exposure_num <- as.integer(factor(habitat $exposure, 
                                       levels = c("vp", "p", "sp", "se", "e", "ve"), 
                                       labels = c(1,2,3,4,5,6)))
@@ -66,7 +53,7 @@ habitat $subtidal_primary_substrate_num <- as.integer(factor(habitat $subtidal_p
                                                         levels = c("mud", "sand", "gravel", "cobble"), 
                                                         labels = c(1,2,3,4)))
 
-hab_dist1 <- read_csv("Data/2022_10_31/bs_data/habitatdistance.csv")
+hab_dist1 <- read_csv("Data/2022_10_31/bs_data/bs_habitatdistance.csv")
 
 h1 <- hab_dist1[c("site", "kelp", "seagrass", "water25m", "freshwater", "rockyshore")] %>%
   column_to_rownames("site")
@@ -98,7 +85,7 @@ hab_dist <- merge( hab_dist1, h9, by = "site")
 
 
 #sediment data
-sed <- read_csv("Data/2022_10_31/bs_data/sediment.csv")
+sed <- read_csv("Data/2022_10_31/bs_data/bs_sediment.csv")
 
 sed$silt <- sed$frac63um + sed$frac32um + sed$frac20um + sed$fracless20um
 sed$silt_perc <- sed$silt/sed$sum
@@ -111,11 +98,10 @@ sed <- sed %>%
 # YSI - habitat - hab_rich - hab_dist - survey_dates - sed
 #merge
 m1 <- merge(ysi_clean, habitat, by = "site")
-m2 <- merge(m1, hab_dist, by = "site")
-m3 <- merge(m2, hab_rich, by = "site") %>%
+m2 <- merge(m1, hab_dist, by = "site") %>%
   select(-c("site"))
-m4 <- merge(survey_dates, m3, by = "dat_site")
-m5 <- merge(m4,sed, by = "site")
+m3 <- merge(survey_dates, m2, by = "dat_site", all.x = T)
+m4 <- merge(m3,sed, by = "site")
 
-write_rds(m5, "Data/2022_10_31/environmental.rds")
+write_rds(m4, "Data/2022_10_31/environmental.rds")
 
