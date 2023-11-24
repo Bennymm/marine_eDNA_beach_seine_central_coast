@@ -1,0 +1,7 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+
+dir_to_ignore/Manuscript
+dir_to_ignore/Thesis_parts

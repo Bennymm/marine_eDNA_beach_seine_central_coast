@@ -1,0 +1,67 @@
+code,common_name,genus_species,higher_classification
+-,no bycatch,,
+amph,amphipod,,Order: Amphipoda
+anem,anemone,,Order: Actiniaria
+baol,baetic olive,Callianax baetica,
+busn,bubble snail,Haminoea vesicula,
+capr,caprellid,,Family: Caprellidae
+cash,caridean shrimp,,Infraorder: Caridea
+ckcr,cryptic kelp crab,Pugettia richii,
+clje,clinging jelly,Gonionemus vertens,
+coje,comb jellie,,Phylum: Ctenophora
+coon,coonstripe shrimp,Pandalus danae,
+crje,cross jellie,Mitrocoma cellularia,
+crsh,crangon shrimp,,Family: Crangonidae
+diwe,dire whelk,Lirabuccinum dirum,
+ducr,dungeoness crab,Metacarcinus magister,
+euph,euphasiids,,Order: Euphausiacea
+frnu,frosted nudibranch,Dirona albolineata,
+fucr,furrowed rock crab,Cancer gibbosulus,
+gama,gamarid,,Family: Gammaridae
+grcr,graceful crab,Metacarcinus gracilis,
+gree,green crab,Carcinus maenas,
+grsa,green algae sacoglossid,Aplysiopsis enteromorphae,
+grur,green urchin,Strongylocentrotus droebachiensis,
+hecr,hermit crab,Pagarus spp,
+hlcr,helmet crab,Telmessus cheiragonus,
+honu,hooded nudibranch,Melibe leonina,
+idio,idiotia,Idotea spp,
+isop,isopod,,Order: Isopoda
+kecr,kelp crab,Pugettia producta,
+lacr,larval crab,,Class: Malacostraca
+lacu,lacuna snail,lacuna spp,
+lept,leptosterias,Leptasterias hexactis,
+lest,leather star,Dermasterias imbricata,
+lije,lion's mane jellyfish,Cyanea capillata,
+lolo,opalescent squid,Doryteuthis opalescens,
+mocr,mole crab,Emerita analoga,
+moje,moon jellie,Aurelia aurita,
+mosn,moon snail,Euspira lewisii,
+most,mottled sea star,Evasterias troscheli,
+mude,multicolour dendronotid,Dendronotus diversicolor,
+myci,mycids,,Order: Mysida
+n/a,no data,,
+nesp,nereis species,Nereis spp,
+olsn,olive snail,Olivella biplicata,
+opnu,opalescent nudibranch,Hermissenda opalescens,
+paoc,pacific red octopus,Octopus rubescens,
+pcno,sun star,Pycnopodia helianthoides,
+pist,giant pink star,pisaster brevispinus,
+poly,polychaetes,,Class: Polychaeta
+prcr,pygmy red rock crab,Glebocarcinus oregonensis,
+pucr,purple shore crab,Hemigrapsus nudus,
+pust,purple star,pisaster ochraceus,
+recr,red rock crab,Cancer productus,
+reje,red medusa jelly,Polyorchis penicillatus,
+sast,sand star,Luidia foliolata,
+secu,giant sea cucumber,Parastichopus californicus,
+sego,sea goose berries,Pleurobrachia pileus,
+sppr,spot prawn,Pandalus platyceros,
+stis,stubby isopod,Gnorimosphaeroma oregonensis,
+stsh,stiletto shrimp,Heptacarpus spp,
+tosn,topsnail spp.,,Family: Trochidae
+uncr,unknown crab,,Class: Malacostraca
+unsn,unknown snail,,Class: Gastropoda
+unst,unknown starfish,,Class: Asteroidea
+urch,unknown urchin,,Class: Echinoidea
+zesl,zebra leafslug,Phyllaplysia taylori,

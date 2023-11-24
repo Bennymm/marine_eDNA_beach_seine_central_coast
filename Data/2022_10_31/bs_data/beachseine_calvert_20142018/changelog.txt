@@ -1,0 +1,26 @@
+# Changelog
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
+
+
+## [v1.0.0] - 2019-04-25
+### Notes
+- This is the initial release of the Beach Seine Survey Dataset- BC Central Coast - 2014-2018.
+
+### Added 
+- Changelog.txt
+- README.txt
+- LISCENCE.txt
+- protocol.pdf
+- bycatch.csv
+- bycatchcodes.csv
+- datadictionary.csv
+- environmental.csv
+- fishcodes.csv
+- habitat.csv
+- netdimensions.csv
+- sediment.csv
+- speciesabundance.csv
+- specieslength.csv
+- vegetationcodes.csv
