@@ -89,4 +89,3 @@ eDNA_long <- s4 %>%
 saveRDS(eDNA_long, "Data/2022_10_31/derived_data/data12se_asvlong_lor_12s_ei.rds")
 saveRDS(s4, "Data/2022_10_31/derived_data/data12se_asvmatrix_lor_12s_ei.rds")
 
-

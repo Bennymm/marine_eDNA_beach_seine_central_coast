@@ -774,7 +774,7 @@ plot_all <-
             heights = c(1,1)) 
 plot_all
 
-ggsave("no_occupancy_model/Figures_tables/biomassDensity_x_read_all.png", 
+ggsave("no_occupancy_model/Figures_tables/richness_regressions.png", 
        plot = plot_all,
        width = 8, height =4, units = "in")
 

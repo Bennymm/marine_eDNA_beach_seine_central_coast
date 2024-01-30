@@ -15,9 +15,9 @@ library(MASS)
 library(MuMIn)
 
 #long data to calculate richness
-long <- read_rds("Data/2022_10_31/shared_long.rds")
+long <- read_rds("Data/2022_10_31/derived_data/shared_long.rds")
 #envonmental data
-env <- read_rds("Data/2022_10_31/environmental.rds")
+env <- read_rds("Data/2022_10_31/derived_data/environmental.rds")
 
 #calculate richness ####
 rich <- long %>%
@@ -84,7 +84,7 @@ data <- merge(rich, env, by = "dat_site")
 library(nlme)
 # correlation structures: https://norcalbiostat.github.io/AppliedStatistics_notes/specifying-correlation-structures.html
 #                         https://www.rdocumentation.org/packages/nlme/versions/3.1-160/topics/corClasses
-
+library(car)
 
   
 data1 <- data %>%
@@ -115,6 +115,13 @@ mm06 <- gls(rich_diff ~ h100m + h1000m +
             correlation = corSymm(form = ~1|site),
             data = data1)
 
+vif(mm01)
+vif(mm02)
+vif(mm03)
+vif(mm04)
+vif(mm05)
+vif(mm06)
+
 
 options(scipen=999)
 model_sel <- as.data.frame(model.sel(mm01, mm02, mm03, mm04, mm05, mm06)) %>%
@@ -125,9 +132,12 @@ options(scipen=0)
 model_performance(mm06)
 summary(mm06)
 
+vif(mm06)
+
 newdata <- data1[c("silt_percent", "h1000m", "h100m")]
 predict <- predict(mm06, newdata = newdata)
 plot(x = data1$rich_diff, y = predict)
+
 
 
 #standardized beta coefficients
@@ -176,9 +186,14 @@ cor.test(x = data3$h1000m, y= data3$rich_e, method = "spearman")
 m1 <- env %>%
   dplyr::select(c("date", "dat_site", "hakai_link_date")) %>%
   pivot_longer(!dat_site, names_to = "date_type", values_to = "date") %>%
-  merge(., env[c("site", "dat_site")], by = "dat_site")
+  merge(., env[c("site", "dat_site")], by = "dat_site") %>%
+  rename("method" = "date_type") %>%
+  mutate(method = ifelse(method == "date", "eDNA", "beach seine"))
 
-ggplot(data = m1, aes(x = date, y = site, group = dat_site)) +
+ggplot(data = m1, aes(x = date, y = site, group = dat_site, shape = method, size = method)) +
   geom_point() +
-  geom_line() +
+ # geom_line(aes(size = 0.1)) +
+  scale_shape_manual(values=c(0, 4)) +
+  scale_size_manual(values=c(6, 2))+
   theme_classic()
+

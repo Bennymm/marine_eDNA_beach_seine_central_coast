@@ -17,7 +17,7 @@ ASVbysite <- readRDS("Data/2022_10_31/derived_data/data12se_asvmatrix_lor_12s_ei
 sitesurvey_data <- readRDS("Data/2022_10_31/derived_data/sitesurvey_data.rds")
 sample_data <- read_csv("Data/2022_10_31/Calvert_12S_metadata.csv")
 
-top10 <- read.delim("Data/2022_10_31/12S_ASV_sequences.length_var.blast.out20221101.txt",
+top10 <- read.delim("Data/2022_10_31/12S_ASV_sequences.length_var.blast.out.txt",
                     h=TRUE,
                     fill = TRUE)
 

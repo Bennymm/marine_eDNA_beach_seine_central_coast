@@ -39,13 +39,14 @@ Note: all scripts must be run independantly (i.e., restart to clear environment 
 	
 02c_occ_formatting:
 	Format read count-by-site with occupancy thresholds
-		-remove observations with <80% probability of occupancy: 110 ASVs remain, 3078676 reads
+		-remove observations with <80% probability of occupancy
+		-read index calculated
 	IN:		*requires data from occ_wrangling02a that is not saved as a temporary file - spec (dataframe)
 			occupancy probabilities - occProb_royallink.rds
 			ASVs by sample (matrix) - ASV_by_sample.rds
 	OUT:	occupancy probability by sample - occprob_by_sample.rds
-			read count by sample, low occupancy removed - data12se_asvmatrix_lor_12s.rds
-
+			read index by sample	matrix 	- data12se_asvmatrix_lor_12s_ei.rds
+									long	- data12se_asvlong_lor_12s_ei.rds
 02d_occ_plotting:
 	Plotting occupancy probability
 			- look at distribution of occupancy probabilities	
@@ -58,19 +59,14 @@ Note: all scripts must be run independantly (i.e., restart to clear environment 
 	This code generates traceplots and density plots calculates as well as summary statistics 
 	for a set of ASVs ranging in their number of positive detections (2 - 243) in entire detection histories
 	IN:		detection histories - ASVlist.rds
-	OUT:	plots of probability of occupancy for differing numbers of detections
+	OUT:	plots of probability of occupancy for differing numbers of detections	
 
-03_read_index:
-	Calculate a proportional read index from read numbers
-	IN:		read count by sample - data12se_asvmatrix_lor_12s.rds
-	OUT:	read index by sample - data12se_asvmatrix_lor_12s_ei.rds
-
-04_BS_taxized:
+03_BS_taxized:
 	resolve taxonomy for beach seining species names
 	IN:		Hakai fish taxa and codes - fishcodes.csv
 	OUT:	Taxonomy resolved - taxa_BS_resolved.rds
 
-05_eDNA_taxa_assignment:
+04_eDNA_taxa_assignment:
 	NOTE: this will now replace assignment_corrections04.R and eDNA_taxized05b_new.R
 	- use the top 10 NCBI hits to determine taxa clusters that are indestinguishable at 12S mifish
 	Steps:1. Identifies if taxa are native to the Northeastern Pacific
@@ -93,7 +89,7 @@ Note: all scripts must be run independantly (i.e., restart to clear environment 
 		taxonomy_eDNA.rds taxonomy table of of species and their group assignments - taxonomy_eDNA.rds
 			-use this to reconcile BS taxonomy, must be done after biomass estimates are made
 
-06_bs_data_formatting:
+05_bs_data_formatting:
 	Correct for mis-ids in beach seine surveys (clustering species into LITs (in code "LCT") for indistinguishable species.
 	Resolve taxonomy for eDNA and beach seining - so both share same LITs
 	IN:	beach seine taxa abundance-by-site - FABSMasterData.xlsx(sheet = "abundance")
@@ -105,7 +101,7 @@ Note: all scripts must be run independantly (i.e., restart to clear environment 
 		LCT-by-site matrix  - bs_specmatrix.rds
 		resolved taxonomy table for both methods - taxonomy_combined.rds
 		
-07_length_weight:
+06_length_weight:
 	Turn count data into biomass.
 	-Using bayesian estimates of mass:length ratios from higher taxonomy, Froese, R., J. Thorson and R.B. Reyes Jr., 2014. A Bayesian approach for estimating length-weight relationships in fishes. J. Appl. Ichthyol. 30(1):78-85.
 	-In the field a subsample of fish were measured when >20 were identified.  In these cases, the weight 
@@ -120,7 +116,7 @@ Note: all scripts must be run independantly (i.e., restart to clear environment 
 		eDNA_long.rds - for filtering to shared surveys
 	OUT: 	bs_long.rds - contains all measures of observations (count, weight, and their area/volume densities)
 
-08_environmental_data_prep:
+07_environmental_data_prep:
 	Format environmental data, calculate temperature gradients and date difference, PCA of seawater mixing
 	
 	OUT: environmental.rds - formated environmental data

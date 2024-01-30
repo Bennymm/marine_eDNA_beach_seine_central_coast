@@ -4,7 +4,6 @@
 # Packages and data ####
 library(tidyverse)
 library(lubridate)
-library(here)
 library(lme4)
 library(scales)
 library(dplyr)
@@ -14,8 +13,8 @@ library(ggside)
 
 #library(plyr) #required for rbind.fill
 
-bs_long1 <- read_rds("Data/2022_10_31/bs_long.rds")
-eDNA_long1 <- read_rds("Data/2022_10_31/eDNA_long.rds")
+bs_long1 <- read_rds("Data/2022_10_31/derived_data/bs_long.rds")
+eDNA_long1 <- read_rds("Data/2022_10_31/derived_data/eDNA_long.rds")
 bs_taxonomy <- read_rds("Data/2022_10_31/derived_data/BS_taxonomy_reconciled.rds")
 eDNA_taxonomy <- read_rds("Data/2022_10_31/derived_data/ASV_taxonomy_reconciled.rds")
 taxonomy_shared <- read_rds("Data/2022_10_31/derived_data/taxonomy_combined.rds")
@@ -82,7 +81,7 @@ long <- a2 %>%
   mutate(grams_per_m2_perc = grams_per_m2 / sum_grams_per_m2)
 
 
-write_rds(long, "Data/2022_10_31/shared_long.rds")
+write_rds(long, "Data/2022_10_31/derived_data/shared_long.rds")
 
 
 #summaries of prevalence and abundance ####
@@ -416,6 +415,77 @@ ggsave("./Figures_tables/biomassDensity_x_read_all.png",
        plot = biomassDens_x_read_all,
        width = 13.2, height = 7.5, units = "in")
 
+biomassDens_x_read_all_small <-
+  ggplot() +
+  geom_jitter(data = q9, aes(x = LCT_shared, y = grams_per_m2, colour = group1),shape=16, position=position_jitter(width = 0.25, height = 0.02), size = 1.5) +
+  geom_jitter(data = q10, aes(x = LCT_shared, y = 0.00005, colour = group1),shape=16, position=position_jitter(width = 0.25, height = 0.1), size = 1.5) +
+  geom_point(data = q11, aes(x = LCT_shared, y = 0.0001, colour = group1),shape=16, size = 1.5) +
+ # geom_point(data = bs_unique_order, aes(x = LCT_shared, y = 0.000025),colour = "#E69F00", size = 2, alpha=1, shape = "triangle")+
+  scale_color_manual(name = "Observation type", 
+                     labels = c( "beach seine detection only (n = 233)",
+                                 "detected with both methods (n = 386)",
+                                 "eDNA detection only (n = 682)",
+                                 "not detected with either method (n = 2517)"),
+                     values=c("beach seine detection only" = "#E69F00",
+                              "detected with both methods" = "#000000", 
+                              "eDNA detection only" = "#D55E00",
+                              "not detected with either method" = "lightgrey")) +
+  scale_y_continuous(trans = 'log10',limits = c(0.000005,1e3),
+                     expand = c(0, 0),
+                     breaks = c(0.0001, 0.001,0.01,0.1,1,10,100,1000),
+                     labels = c(expression("<" ~10^{"-4"}),
+                                expression(10^{"-3"}),
+                                expression(10^{"-2"}),
+                                expression(10^{"-1"}),
+                                "1", 
+                                "10",
+                                expression(10^{"2"}), 
+                                expression(10^{"3"}))) +
+  scale_x_discrete(limits = W_order$LCT_shared) +
+  theme_classic() +
+  theme(axis.text.x = element_blank(),
+        axis.ticks.x = element_blank(),
+        axis.title.y = element_text(size = 12),
+        axis.text.y = element_text(size = 11),
+        legend.position = c(0.75,0.8),
+        legend.text=element_text(size = 12),
+        plot.margin = margin(0.5, 0.5, 2, 0.5, "cm")) +
+  labs(x = "Taxa in ranked order of mean biomass") +
+  #      y =  "Biomass density (grams / m^2)") + 
+  ylab(bquote('Biomass density '(g / m^2))) +
+  #  theme(axis.text.x = element_text(face = W_order$group2)) +
+  annotate("point", x = bs_unique_order$LCT_shared, y = 0.000025,colour = "#E69F00", size = 2, alpha=1, shape = "triangle")+
+  annotate("point", x = eDNA_unique_order$LCT_shared, y = 0.000025, colour = "#D55E00", size = 2, alpha=1, shape = "triangle") +
+  guides(colour = guide_legend(override.aes = list(size=3))) +
+  annotate("text", x = 14.8, y = 0.00023, label = expression(10^{"-9"}), size = 4) +
+  annotate("segment", x= 13, y = 0.0003, xend = 13, yend = 0.00012, arrow = arrow(length = unit(.15,"cm"))) +
+  annotate("text", x = 57.8, y = 0.00023, label = expression(10^{"-6"}), size = 4) +
+  annotate("segment", x= 56, y = 0.0003, xend = 56, yend = 0.00012, arrow = arrow(length = unit(.15,"cm"))) +
+  geom_hline(yintercept = 0.0001, colour = "gray", linetype = "dotted")#+
+  #annotate("text", x = 20, y = 0.000005, label = "text")  +
+#  coord_cartesian(ylim = c(0.00002, 1e3), clip = "off")
+
+biomassDens_x_read_all_small
+
+ggsave("./Figures_tables/biomassDensity_x_read_all_small.png", 
+       plot = biomassDens_x_read_all_small,
+       width = 8, height = 4, units = "in")
+
+#euler plot
+library(eulerr)
+#eDNA 
+628 +386
+#1014
+#BS
+233+386
+#619
+#both
+#396
+fit <- euler(c("A" = 1014, "B" = 619, "A&B" = 396))
+plot(fit)
+
+
+
 
 #summaries of prevalence and abundance
 
@@ -522,8 +592,7 @@ ggsave("./Figures_tables/missed_obs_ebe.png",
 #SADs
 
 #envonmental data
-env <- read_rds("Data/2022_10_31/environmental.rds")
-
+env <- read_rds("Data/2022_10_31/derived_data/environmental.rds")
 
 long1 <- long %>%
   merge(., env[c("dat_site","h100m", "silt_percent", "site", "year", "month")], by = "dat_site")
@@ -599,14 +668,16 @@ ggplot() +
   scale_fill_manual(name = "dd",values=c("#D55E00", "lightgrey"))
   
 
+
+
 pd <- position_dodge(0)
-rank_plot <- ggplot() +
+ggplot() +
   #  geom_point(size = 2) +
-  geom_line(data = t1, aes(x = rank_bio, y = grams_per_m2, group = dat_site, colour = p_a_eDNA),position = pd, colour = "lightgrey")+
+  geom_line(data = t1, aes(x = rank_abund, y = count_per_m2, group = dat_site, colour = p_a_eDNA),position = pd, colour = "lightgrey")+
   # scale_colour_gradient(name = "habitat richness\n100-m radius", low = "darkgreen", high = "yellow")+
   #  scale_colour_gradientn(name = "habitat richness\n100-m radius", colours =  c("green", "orange", "red"))+
-  geom_jitter(data = t3, aes(x = rank_bio, y = grams_per_m2, shape = p_a_eDNA), size = 1.5, width = 0.05, height = 0, colour = "black", alpha = 0.3)+
-  geom_jitter(data = t2, aes(x = rank_bio, y = grams_per_m2, shape = p_a_eDNA), size = 2, width = 0.05, height = 0, colour = "#D55E00", alpha = 0.3)+
+  geom_jitter(data = t3, aes(x = rank_abund, y = count_per_m2, shape = p_a_eDNA), size = 1.5, width = 0.05, height = 0, colour = "black", alpha = 0.3)+
+  geom_jitter(data = t2, aes(x = rank_abund, y = count_per_m2, shape = p_a_eDNA), size = 2, width = 0.05, height = 0, colour = "#D55E00", alpha = 0.3)+
   
   scale_shape_manual(name = "eDNA\nobservation\ntype", labels =c("false negative", "true positive"), values=c(19, 20))+
   geom_hline(yintercept = 0.0001, colour = "gray", linetype = "dotted") +
@@ -622,34 +693,13 @@ rank_plot <- ggplot() +
                                 expression(10^{"3"}))) +
   theme_classic()+ 
   theme(legend.position = c(0.7,0.6))  + 
-  ylab(bquote('biomass density '(g / m^2))) +
-  xlab("Rank") 
-
-xplot <- ggplot() +
-  geom_density(data = t1, aes(x = rank_bio, fill = p_a_eDNA), alpha = 0.8) +
-  scale_fill_manual(name = "dd",values=c("#D55E00", "lightgrey")) +
-  theme_classic() +
-  clean_theme() + 
-  theme(legend.position="none")
-xplot
-yplot <- ggplot() +
-  geom_density(data = t1, aes(x = grams_per_m2, fill = p_a_eDNA), alpha = 0.8) +
-  scale_fill_manual(name = "dd",values=c("#D55E00", "lightgrey"))+
-  scale_x_continuous(trans = 'log10',limits = c(0.0001,1e3))+ 
-  theme_classic() +
-  clean_theme() +
-  coord_flip()+ 
-  theme(legend.position="none")
- yplot
-  
- 
- 
- 
-  ggarrange(xplot, NULL, rank_plot, yplot, 
-            ncol = 2, nrow = 2,  align = "hv", 
-            widths = c(4, 1), heights = c(1, 5),
-            common.legend = F)
-
+  ylab(bquote('Biomass density '(g / m^2))) +
+  xlab("Rank") +
+  geom_ysidedensity(data = t1, aes(y = count_per_m2, fill = p_a_eDNA), alpha = 0.8) + 
+  scale_ysidex_continuous(breaks = NULL, labels = NULL) +
+  geom_xsidedensity(data = t1, aes(x = rank_abund, fill = p_a_eDNA), alpha = 0.8) + 
+  scale_xsidey_continuous(breaks = NULL, labels = NULL) +
+  scale_fill_manual(name = "dd",values=c("#D55E00", "lightgrey"))
 
   
   
