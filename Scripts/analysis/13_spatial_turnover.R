@@ -1,3 +1,4 @@
+
 #plot spatial pairwise dissimilarities for each method
 #model turnover as a function of environmental variables and pairwise distance
 # packages ####
@@ -15,10 +16,10 @@ library(GUniFrac)
 
 #data and prep ####
 #long data to calculate richness
-long <- read_rds("Data/2022_10_31/shared_long.rds")
+long <- read_rds("Data/2022_10_31/derived_data/shared_long.rds")
 #long <- filter(long, gamma_error == "both")             # run this to do analysis for taxa detected in both methods
 #envonmental data
-env <- read_rds("Data/2022_10_31/environmental.rds") %>%
+env <- read_rds("Data/2022_10_31/derived_data/environmental.rds") %>%
   mutate(exposure_num = ifelse(exposure_num == 5,4,exposure_num))
 
 eDNA_mat <- pivot_wider(long[c("LCT_shared", "dat_site", "p_a_eDNA")], 
