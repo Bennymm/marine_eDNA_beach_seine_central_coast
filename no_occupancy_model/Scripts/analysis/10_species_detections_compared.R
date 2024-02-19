@@ -749,13 +749,22 @@ p_h1000m <- ggplot() +
   annotate("text", x = -0.2, y = 51, label = "B", fontface =2, size = 5)
 p_h1000m
 
+reverselog_trans <- function(base = exp(1)) {
+  trans <- function(x) -log(x, base)
+  inv <- function(x) base^(-x)
+  trans_new(paste0("reverselog-", format(base)), trans, inv, 
+            log_breaks(base = base), 
+            domain = c(1e-100, Inf))
+}
+
 p_silt <- ggplot() +
   geom_jitter(data = silt_percent_e, aes(x = hab_rich, y = richness), shape = 16, width = 0.01, colour = "#D55E00", size = 2.5)+
   geom_smooth(data = silt_percent_e, aes(x = hab_rich, y = richness),method = lm, se = T, colour = "#D55E00")+
   geom_jitter(data = silt_percent_b, aes(x = hab_rich, y = richness), shape = 17, width = 0.01, colour = "#E69F00", size = 2.5)+
   geom_smooth(data = silt_percent_b, aes(x = hab_rich, y = richness),method = lm, se = T, colour = "#E69F00")+
   theme_classic()+ 
-  scale_x_continuous(trans = "log10") +
+  scale_x_continuous(trans=reverselog_trans(10)) +
+  # scale_x_reverse() +
   xlab("% fine sediment (reversed log10 scale)") +
   ylab("taxonomic richness")+
   scale_shape_manual(values = c(17, 16)) +
@@ -765,7 +774,7 @@ p_silt <- ggplot() +
   annotate("text", x = 8, y = 48, label = "eDNA")+
   annotate("pointrange", x= 4,xmin = 3.5, xmax = 4.5, y=46, linewidth = 1, colour = "#E69F00") +
   annotate("text", x = 11, y = 46, label = "beach seine") +
-  annotate("text", x = 0.19, y = 51, label = "A", fontface =2, size = 5)
+  annotate("text", x = 30, y = 51, label = "A", fontface =2, size = 5)
 p_silt
 
 plot_all <- 

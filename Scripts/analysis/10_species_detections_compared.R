@@ -18,6 +18,7 @@ eDNA_long1 <- read_rds("Data/2022_10_31/derived_data/eDNA_long.rds")
 bs_taxonomy <- read_rds("Data/2022_10_31/derived_data/BS_taxonomy_reconciled.rds")
 eDNA_taxonomy <- read_rds("Data/2022_10_31/derived_data/ASV_taxonomy_reconciled.rds")
 taxonomy_shared <- read_rds("Data/2022_10_31/derived_data/taxonomy_combined.rds")
+
 # collapse taxonomy and derive read_index ####
 #because we are directly comparing metrics of abundance or density for each taxa collapse taxonomy
 #to LCT_shared in the taxonomy tables
@@ -32,7 +33,7 @@ bs_long <- bs_long1 %>%
   dplyr::select(-c("date", "site"))
 
 e1 <- eDNA_long1 %>%
-  merge(., eDNA_taxonomy[c("ASV", "LCT_shared")], by = "ASV") %>%            #these differ because some ASVs without ID or not-fish made it through, fix this in earlier code
+  merge(., eDNA_taxonomy[c("ASV", "LCT_shared")], by = "ASV") %>%            
   dplyr::select(-c("ASV")) %>%
   group_by(dat_site, site, date, hakai_link_date, LCT_shared) %>%
   summarize_at(c("count"), sum)%>% 
@@ -839,7 +840,7 @@ p_h100m <- ggplot() +
   theme_classic() +
   xlab("habitat richness (100-m radius)") +
   ylab("taxonomic richness") +
-  annotate("text", x = -0.2, y = 37, label = "B", fontface =2, size = 5)
+  annotate("text", x = -0.1, y = 37, label = "B", fontface =2, size = 5)
 p_h100m
 
 p_h1000m <- ggplot() +
@@ -852,8 +853,16 @@ p_h1000m <- ggplot() +
   xlim(2.5,5.5)+
   xlab("habitat richness (1000-m radius)") +
   ylab("taxonomic richness") +
-  annotate("text", x = -0.2, y = 37, label = "B", fontface =2, size = 5)
+  annotate("text", x = 0, y = 37, label = "B", fontface =2, size = 5)
 p_h1000m
+
+reverselog_trans <- function(base = exp(1)) {
+  trans <- function(x) -log(x, base)
+  inv <- function(x) base^(-x)
+  trans_new(paste0("reverselog-", format(base)), trans, inv, 
+            log_breaks(base = base), 
+            domain = c(1e-100, Inf))
+}
 
 p_silt <- ggplot() +
   geom_jitter(data = silt_percent_e, aes(x = hab_rich, y = richness), shape = 16, width = 0.01, colour = "#D55E00", size = 2.5)+
@@ -861,7 +870,8 @@ p_silt <- ggplot() +
   geom_jitter(data = silt_percent_b, aes(x = hab_rich, y = richness), shape = 17, width = 0.01, colour = "#E69F00", size = 2.5)+
   geom_smooth(data = silt_percent_b, aes(x = hab_rich, y = richness),method = lm, se = T, colour = "#E69F00")+
   theme_classic()+ 
-  scale_x_continuous(trans = "log10") +
+  scale_x_continuous(trans=reverselog_trans(10)) +
+ # scale_x_reverse() +
   xlab("% fine sediment (reversed log10 scale)") +
   ylab("taxonomic richness")+
   scale_shape_manual(values = c(17, 16)) +
@@ -871,7 +881,7 @@ p_silt <- ggplot() +
   annotate("text", x = 8, y = 34, label = "eDNA")+
   annotate("pointrange", x= 4,xmin = 3.5, xmax = 4.5, y=32, linewidth = 1, colour = "#E69F00") +
   annotate("text", x = 11, y = 32, label = "beach seine") +
-  annotate("text", x = 0.19, y = 37, label = "A", fontface =2, size = 5)
+  annotate("text", x = 30, y = 37, label = "A", fontface =2, size = 5)
 p_silt
 
 plot_all <- 
